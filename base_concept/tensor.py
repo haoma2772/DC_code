@@ -95,11 +95,65 @@ if __name__ == '__main__':
     print(t)
 
     # 15.torch.bernoulli(input, *, generator=None, out=None)
-    # input为概率值 生成伯努利分布 input输入必须是tensor
+    # input为概率值是一个tensor  生成伯努利分布 input输入必须是tensor
     print('15. torch.bernoulli')
-    p = torch.tensor(0.1)
-    t = torch.bernoulli(p)
+    # 生成一个形状为 (2, 3) 的随机张量，其中的元素服从伯努利分布
+    input = torch.tensor([[0.7, 0.4, 0.9], [0.2, 0.6, 0.3]])
+    output = torch.bernoulli(input)
+    print(output)
+
+    # 16. item()函数
+    print('16. item()函数')
+    t = torch.randn(1)
+    print(t.item())
+
+    # 17. tensor 与 numpy的相互转化  但是仍然共享内存
+    # 使用numpy 将 tensor 转化为 numpy
+    # 使用 from_numpy 将 numpy转化为 tensor 这两个的内存是一样的   但是呢 如果我直接 torch.tensor() 内存是不一样的
+    # 即使内存是共享的 但是id 还是不一样的 因为 id 唯一标识对象
+    print('17. tensor 与 numpy转化')
+    a = np.zeros((3,3))
+    print(id(a))
+    b = torch.from_numpy(a)
+    print(id(b))
+
+    # 18. tensor on gpu
+    # tensor.to()
+    print('18. tensor.to(device)')
+    device = 'cuda'
+    t = torch.rand((5,5),device=device)
     print(t)
+
+    # 19. 自动求梯度
+    # tensor 的属性 .requires.grad 设置为true
+    #  他将追踪 在其上的所有操作 可以调用 .detach() 将追踪记录 分离出来
+    # .backward()进行计算  然后将梯度积累到了.grad当中
+    # 每个tensor 都有一个 grad_fn属性 即创建该tensor的 function
+    # 只允许 标量对张量求导 所以最后得出的结果是一个张量 才能求导
+    print('19. requires_grad grad backward grad_fn')
+    t = torch.ones((2,2), requires_grad=True)
+    print(t)
+    # print(t.grad)   # 梯度
+    # print(t.grad_fn)    # 函数吗？
+    y = t + 3
+    print(y)
+    # print(y.grad)     没法现在就使用
+    print(y.grad_fn)
+    z = y * y + 20*y + 300
+    print(z)
+    z = z.mean()        # 计算的是所有元素的平均值
+    print(z)
+    z.backward()    # 计算梯度
+    print(t.grad)
+
+
+
+
+
+
+
+
+
 
 
 
